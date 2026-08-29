@@ -1,0 +1,5 @@
+modelo,accuracy,accuracy_std,precision_macro,precision_macro_std,recall_macro,recall_macro_std,f1_macro,f1_macro_std
+Regresion Logistica,0.7962,0.0138,0.8045,0.0147,0.7782,0.0145,0.7841,0.015
+Naive Bayes Multinomial,0.7972,0.0079,0.8107,0.0065,0.7768,0.0093,0.7833,0.0093
+SVM lineal (LinearSVC),0.7792,0.0145,0.7768,0.0158,0.7687,0.0137,0.7714,0.0143
+Random Forest,0.7845,0.0117,0.7886,0.0124,0.7682,0.0125,0.7731,0.0127

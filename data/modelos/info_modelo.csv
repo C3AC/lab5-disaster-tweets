@@ -1,0 +1,2 @@
+mejor_modelo,f1_macro_test,accuracy_test,roc_auc_test,max_features,ngram_range
+Naive Bayes Multinomial,0.7909463165408167,0.8031914893617021,0.8551401615740181,5000,"(1, 2)"
