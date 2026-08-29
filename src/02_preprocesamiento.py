@@ -88,7 +88,7 @@ def clean_text(text: str, keep_911: bool = True) -> str:
 
     # 6. proteger "911" antes de quitar numeros/puntuacion
     if keep_911:
-        text = text.replace('911', ' NUM911TOKEN ')
+        text = text.replace('911', ' num911token ')
 
     # 7. apostrofes y puntuacion
     text = PUNCT_RE.sub(' ', text)

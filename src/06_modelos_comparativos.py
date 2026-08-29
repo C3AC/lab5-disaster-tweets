@@ -34,6 +34,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,
                              f1_score, classification_report, confusion_matrix,
                              roc_auc_score, roc_curve)
@@ -78,7 +79,7 @@ def clean_text(text: str, keep_911: bool = True) -> str:
     text = HTML_ENTITY_RE.sub(' ', text)
     text = text.replace('_', ' ')
     if keep_911:
-        text = text.replace('911', ' NUM911TOKEN ')
+        text = text.replace('911', ' num911token ')
     text = PUNCT_RE.sub(' ', text)
     text = NUMBER_RE.sub(' ', text)
     if keep_911:
@@ -238,14 +239,23 @@ test_df.round(4).to_csv("../data/resultados_modelos_finales.csv")
 # 4. Seleccion del mejor modelo por F1 macro en prueba
 # ---------------------------------------------------------------------------
 mejor_nombre = test_df['f1_macro'].idxmax()
-mejor_modelo = mejores_modelos[mejor_nombre]
 print("\n" + "=" * 70)
 print(f"MEJOR MODELO: {mejor_nombre}")
 print(f"F1 macro en prueba: {test_df.loc[mejor_nombre, 'f1_macro']:.4f}")
 print(f"Accuracy en prueba: {test_df.loc[mejor_nombre, 'accuracy']:.4f}")
 print("=" * 70, flush=True)
 
+# El mejor modelo se calibra para obtener probabilidades reales (predict_proba),
+# necesarias para reportar confianza y la curva ROC sobre datos de prueba.
+mejor_modelo = CalibratedClassifierCV(
+    mejores_modelos[mejor_nombre], cv=3, method='sigmoid')
+mejor_modelo.fit(X_train_tfidf, y_train)
+
 y_pred_mejor = mejor_modelo.predict(X_test_tfidf)
+f1_best_test = f1_score(y_test, y_pred_mejor, average='macro')
+acc_best_test = accuracy_score(y_test, y_pred_mejor)
+print(f"\nMetricas finales (modelo calibrado) en prueba:")
+print(f"F1 macro: {f1_best_test:.4f} | Accuracy: {acc_best_test:.4f}")
 
 # Matriz de confusion del mejor modelo
 cm = confusion_matrix(y_test, y_pred_mejor)
@@ -261,10 +271,7 @@ plt.savefig("../figures/13_matriz_confusion_mejor.png")
 plt.show()
 
 # Curva ROC del mejor modelo
-if hasattr(mejor_modelo, "predict_proba"):
-    proba = mejor_modelo.predict_proba(X_test_tfidf)[:, 1]
-else:
-    proba = mejor_modelo.decision_function(X_test_tfidf)
+proba = mejor_modelo.predict_proba(X_test_tfidf)[:, 1]
 roc_auc = roc_auc_score(y_test, proba)
 fpr, tpr, _ = roc_curve(y_test, proba)
 fig, ax = plt.subplots(figsize=(6, 5))
@@ -286,11 +293,12 @@ joblib.dump(mejor_modelo, "../data/modelos/mejor_modelo.joblib")
 joblib.dump(vectorizer, "../data/modelos/vectorizer.joblib")
 info = pd.DataFrame([{
     "mejor_modelo": mejor_nombre,
-    "f1_macro_test": test_df.loc[mejor_nombre, 'f1_macro'],
-    "accuracy_test": test_df.loc[mejor_nombre, 'accuracy'],
+    "f1_macro_test": f1_best_test,
+    "accuracy_test": acc_best_test,
     "roc_auc_test": roc_auc,
     "max_features": 5000,
     "ngram_range": "(1, 2)",
+    "calibrado": "CalibratedClassifierCV(sigmoid, cv=3)",
 }])
 info.to_csv("../data/modelos/info_modelo.csv", index=False)
 print("\nModelo guardado en ../data/modelos/", flush=True)
@@ -303,10 +311,7 @@ def predecir_tweet(texto: str) -> tuple:
     limpio = clean_text(texto)
     x = vectorizer.transform([limpio])
     pred = mejor_modelo.predict(x)[0]
-    if hasattr(mejor_modelo, "predict_proba"):
-        confianza = mejor_modelo.predict_proba(x)[0][1]
-    else:
-        confianza = float(np.clip(mejor_modelo.decision_function(x)[0], 0, 1))
+    confianza = mejor_modelo.predict_proba(x)[0][1]
     return int(pred), confianza, limpio
 
 
