@@ -1,0 +1,4 @@
+modelo,best_f1_macro_cv,best_params
+SVM lineal (LinearSVC),0.7752311012963636,"{'clf__C': 0.1, 'clf__class_weight': 'balanced'}"
+Regresion Logistica,0.7722508769639242,"{'clf__C': 1.0, 'clf__class_weight': 'balanced'}"
+Naive Bayes Multinomial,0.7671321549976406,{'clf__alpha': 0.5}

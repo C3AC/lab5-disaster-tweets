@@ -1,0 +1,2 @@
+modelo_algoritmo,usa_negatividad,f1_macro_cv_base,f1_macro_cv_negatividad,f1_macro_test_final,accuracy_test_final,roc_auc_test_final,best_params,max_features,ngram_range,sentiment_method
+SVM lineal (LinearSVC),True,0.7752311012963636,0.7754665357128422,0.7787708802475259,0.7892287234042553,0.8418886697530473,"{'clf__C': 0.1, 'clf__class_weight': 'balanced'}",5000,"(1, 2)",TextBlob polarity

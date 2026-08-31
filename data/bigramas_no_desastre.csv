@@ -1,16 +1,16 @@
-bigrama,frecuencia
-cross body,39
-liked video,34
-full read,28
-body bag,27
-body bagging,24
-body bags,22
-burning buildings,22
-looks like,21
-reddit quarantine,21
-feel like,20
-content policy,20
-loud bang,19
-quarantine offensive,19
-offensive content,18
-pick fan,17
+bigrama,frecuencia,probabilidad
+cross body,39,0.0012498798192481493
+liked video,34,0.0010896388167804378
+full read,28,0.000897349613819184
+body bag,27,0.0008653014133256418
+body bagging,24,0.0007691568118450149
+burning buildings,22,0.0007050604108579303
+body bags,22,0.0007050604108579303
+looks like,21,0.0006730122103643881
+reddit quarantine,21,0.0006730122103643881
+feel like,20,0.0006409640098708457
+content policy,20,0.0006409640098708457
+quarantine offensive,19,0.0006089158093773035
+loud bang,19,0.0006089158093773035
+offensive content,18,0.0005768676088837611
+fan army,17,0.0005448194083902189
